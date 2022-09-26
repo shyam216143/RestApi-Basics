@@ -1,17 +1,20 @@
+from functools import partial
 import json
 from django.shortcuts import render
 from rest_framework.response import Response
-
+from django.contrib.auth.models import User
 from rest_framework.decorators import api_view
 from rest_framework.generics import GenericAPIView, ListAPIView, CreateAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView,RetrieveDestroyAPIView,RetrieveUpdateDestroyAPIView
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveModelMixin,UpdateModelMixin, DestroyModelMixin
-from .serializers import Myserializer, Myserializer1
+from .serializers import Myserializer, Myserializer1, Myserializer2
 from rest_framework.status import *
 from rest_framework import permissions
 from rest_framework.viewsets import ViewSet,ModelViewSet
-from rest_framework.authentication import BasicAuthentication, SessionAuthentication
+from rest_framework.authentication import BasicAuthentication, SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from .customauth import CustomAuthentication
 # Create your views here.
 
 from .models import *
@@ -22,17 +25,19 @@ def home(request):
     employee1 = student.objects.all()
     print(employee1)
     serializer = Myserializer1(employee1, many=True)
-    # return Response({"status":200, "message":"hellon dude this is y rest project","payloadbjlkjb":serializer.data})
-    return Response(serializer.data)
+    return Response({"status":200, "message":"hellon dude this is y rest project","payloadbjlkjb":serializer.data})
+    # return Response("hello world")
 
 
  
 @ api_view(['POST'])
 def post_home(request):
-    employee1 = employee.objects.all()
+    employee1 = User.objects.all()
     print(employee1)
-    serializer = Myserializer(data=request.data)
+    serializer = Myserializer2(data=request.data)
+
     print("serializervis :",serializer)
+    print("serializer data:",serializer.data)
     if serializer.is_valid():
         serializer.save()
    
@@ -225,19 +230,26 @@ class employeeViewset(ViewSet):
 #  modelviewset
 
 class employeeViewModelset(ModelViewSet):
-    queryset = employee.objects.all()
-    serializer_class= Myserializer
+    queryset = User.objects.all()
+    
+    serializer_class= Myserializer2
     # authentication_classes=[BasicAuthentication] # #his used for general login first
     # permission_classes=[IsAuthenticated]
     # authentication_classes=[SessionAuthentication]  # this used for session  login 
     # permission_classes=[IsAuthenticated]
     # permission_classes=[IsAdminUser] #this is used for permssion for only admin user
+    # authentication_classes=[TokenAuthentication]  # this used for Token  login 
+    # permission_classes=[IsAuthenticated]
+    # authentication_classes=[CustomAuthentication]  # this used for Token  login 
+    # permission_classes=[IsAuthenticated] 
+    # authentication_classes=[JWTAuthentication]  # this used for jwtToken  login 
+    # permission_classes=[IsAuthenticated]
 
 from rest_framework.renderers import JSONRenderer, StaticHTMLRenderer
 class employeeViewModelset1(ModelViewSet):
     queryset = employee.objects.all()
     serializer_class= Myserializer1
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
    
     def highlight(self, request, *args, **kwargs):
@@ -332,5 +344,25 @@ def example2(request):
             json_data = JSONRenderer().render(res)
             return HttpResponse(json_data, content_type='application/json')
        
+        json_data = JSONRenderer().render(serializer.errors)    
+        return HttpResponse(json_data, content_type='application/json')
+
+
+    if request.method=='PUT':     
+        json_data= request.body
+        stream = io.BytesIO(json_data)
+        print(stream)
+        python_data = JSONParser().parse(stream)
+        print(python_data)
+        id = python_data.get('id', None)
+        emp = employee.objects.get(id = id)
+        serializer = Myserializer(emp, data=python_data, partial=True)
+        print(serializer)
+        if serializer.is_valid() :
+            serializer.save()
+            res={"msg":"successfully Updated"}
+            json_data = JSONRenderer().render(res)
+            return HttpResponse(json_data, content_type='application/json')
+        
         json_data = JSONRenderer().render(serializer.errors)    
         return HttpResponse(json_data, content_type='application/json')

@@ -6,7 +6,9 @@ from rest_framework.routers import DefaultRouter
 from . views import employeDestroy, home, post_home, update_home, delete_home, employeList,employeCreate, employeRetrieve, employeUpdate,employeListAndCreate,employeUpdateRetriveDestroy, employeList1,employeCreate1
 from .views import employeRetrieve1,employeUpdate1,employeDestroy1, employeListAndCreate1,employeRetrieveAndUpdate1,employeRetrieveAndDestroy1,employeRetrieveUpdateDestroy1,employeeViewset,employeeViewModelset,employeeViewModelset1
 from . views import example,example1, example2
-
+from rest_framework.authtoken.views import obtain_auth_token
+from .auth import CustomToken
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 router = DefaultRouter()
 router.register('viewset', employeeViewset, basename='employee_view_set')
 
@@ -46,5 +48,20 @@ urlpatterns = [
     path("example/<int:pk>",example, name="example"),
     path("example1/",example1, name="example1"),
     path("example2/",example2, name="example2"),
+
+
+    # clent ask for token bilt in class
+    path('getauthtoken/', obtain_auth_token),
+
+
+    #custom side creation of  token generations 
+    path('getcustomtoken/', CustomToken.as_view()),
+
+    #  jwt token useage it creates virtual token for current usage of user
+    path('gettoken/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('refreshtoken/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('verifytoken/', TokenVerifyView.as_view(), name='token_verify'),
+  
+
 
 ]
