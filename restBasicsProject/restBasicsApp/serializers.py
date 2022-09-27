@@ -1,8 +1,8 @@
 from dataclasses import fields
 from rest_framework.serializers import *
 from .models import * 
-from django.contrib.auth.models import User
-
+from .models import User
+from rest_framework import serializers
 class Myserializer(ModelSerializer):
     class Meta:
         model=employee
@@ -43,3 +43,12 @@ class ExampleSerializer(Serializer):
     emp_age = models.IntegerField(default=0)
     emp_number= models.IntegerField(default=000000)
     emp_address = models.CharField(max_length=200)
+
+class UserRegisterationsSerializer(ModelSerializer):
+    password2=serializers.CharField(style={'input_type': 'password'},write_only=True)
+    class Meta:
+        model=User
+        fields='__all__'
+        extra_kwargs={
+            'password':{'write_only':True,}
+        }

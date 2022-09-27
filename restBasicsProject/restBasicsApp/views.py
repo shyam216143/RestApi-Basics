@@ -18,13 +18,21 @@ from .customauth import CustomAuthentication
 # Create your views here.
 
 from .models import *
+from rest_framework.views import APIView
 
 
 @ api_view(['GET'])
 def home(request):
-    employee1 = student.objects.all()
+    employee1 = employee.objects.all()
     print(employee1)
-    serializer = Myserializer1(employee1, many=True)
+    serializer = Myserializer(employee1, many=True)
+    return Response({"status":200, "message":"hellon dude this is y rest project","payloadbjlkjb":serializer.data})
+    # return Response("hello world")
+@ api_view(['GET'])
+def home1(request,id=None):
+    employee1 = User.objects.filter(username=id)
+    print(employee1)
+    serializer = Myserializer2(employee1, many=True)
     return Response({"status":200, "message":"hellon dude this is y rest project","payloadbjlkjb":serializer.data})
     # return Response("hello world")
 
@@ -218,6 +226,7 @@ class employeeViewset(ViewSet):
         queryset.delete()
         return Response({'message':"deleted successfully"})
     def create(self, request):
+
         serializer = Myserializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -366,3 +375,10 @@ def example2(request):
         
         json_data = JSONRenderer().render(serializer.errors)    
         return HttpResponse(json_data, content_type='application/json')
+
+
+
+
+class JWTClass(APIView):
+    def get(self, request, format=None):
+        return Response({'msg':"Success"})

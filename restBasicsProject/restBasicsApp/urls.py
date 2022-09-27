@@ -3,9 +3,9 @@ from doctest import Example
 from xml.etree.ElementInclude import include
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter    
-from . views import employeDestroy, home, post_home, update_home, delete_home, employeList,employeCreate, employeRetrieve, employeUpdate,employeListAndCreate,employeUpdateRetriveDestroy, employeList1,employeCreate1
+from . views import employeDestroy, home, home1,post_home, update_home, delete_home, employeList,employeCreate, employeRetrieve, employeUpdate,employeListAndCreate,employeUpdateRetriveDestroy, employeList1,employeCreate1
 from .views import employeRetrieve1,employeUpdate1,employeDestroy1, employeListAndCreate1,employeRetrieveAndUpdate1,employeRetrieveAndDestroy1,employeRetrieveUpdateDestroy1,employeeViewset,employeeViewModelset,employeeViewModelset1
-from . views import example,example1, example2
+from . views import example,example1, example2,JWTClass
 from rest_framework.authtoken.views import obtain_auth_token
 from .auth import CustomToken
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
@@ -22,6 +22,7 @@ router2.register('api', employeeViewModelset1, basename='employee')
 
 urlpatterns = [
     path("1",home, name="home"),
+    path("1/<str:id>",home1, name="home"),
     path("post",post_home, name="home"),
     path("update/<int:id>/",update_home, name="home"),
     path("delete/<int:id>/",delete_home, name="home"),
@@ -61,6 +62,7 @@ urlpatterns = [
     path('gettoken/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('refreshtoken/', TokenRefreshView.as_view(), name='token_refresh'),
     path('verifytoken/', TokenVerifyView.as_view(), name='token_verify'),
+    path('basicjwt/', JWTClass.as_view(), name='token_verify'),
   
 
 
