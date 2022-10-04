@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
     'restBasicsApp',
-   
 ]
 
 MIDDLEWARE = [
@@ -183,3 +182,43 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER= os.environ.get('EMAIL_USER')
 EMAIL_HOST_PASSWORD= os.environ.get('EMAIL_PASS')
 EMAIL_HOST_TLS= True
+
+
+
+
+
+
+# cookie and session settings for same site domain
+# CSRF_COOKIE_SAMESITE = 'Strict'
+# SESSION_COOKIE_SAMESITE = 'Strict'
+# CSRF_COOKIE_HTTPONLY = True
+# SESSION_COOKIE_HTTPONLY = True
+
+# PROD ONLY
+# CSRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
+
+
+# cookie and session settings for cross site domain
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_HTTPONLY = True
+SESSION_COOKIE_HTTPONLY = True
+
+
+
+
+
+
+
+
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+]
+CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
+CORS_ALLOW_CREDENTIALS = True
+
+
+

@@ -7,7 +7,6 @@ from .utilsemail import Util
 from .models import * 
 from .models import User
 from rest_framework import serializers
-
 from django.utils.encoding import force_bytes, DjangoUnicodeDecodeError, smart_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -70,7 +69,7 @@ class UserRegisterationsSerializer(ModelSerializer):
 
 
     def create(self, validate_date):
-        return User.objects.create_user(**validate_date     )    
+        return User.objects.create_user(**validate_date)    
 
 
 class UserLoginSerializer(ModelSerializer):

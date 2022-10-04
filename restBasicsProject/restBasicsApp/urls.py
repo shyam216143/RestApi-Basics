@@ -3,7 +3,7 @@ from doctest import Example
 from xml.etree.ElementInclude import include
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter    
-from . views import SendPasswordResetEmailView, UserChangePasswordView, UserLoginView, UserPasswordResetView, UserProfileView, employeDestroy, home, home1,post_home, update_home, delete_home, employeList,employeCreate, employeRetrieve, employeUpdate,employeListAndCreate,employeUpdateRetriveDestroy, employeList1,employeCreate1
+from . views import SendPasswordResetEmailView, UserChangePasswordView, UserLoginView, UserPasswordResetView, UserProfileView, employeDestroy, get_csrf, home, home1, login_view, logout_view,post_home, session_view, update_home, delete_home, employeList,employeCreate, employeRetrieve, employeUpdate,employeListAndCreate,employeUpdateRetriveDestroy, employeList1,employeCreate1, whoami_view
 from .views import employeRetrieve1,employeUpdate1,employeDestroy1, employeListAndCreate1,employeRetrieveAndUpdate1,employeRetrieveAndDestroy1,employeRetrieveUpdateDestroy1,employeeViewset,employeeViewModelset,employeeViewModelset1
 from . views import example,example1, example2,JWTClass
 from rest_framework.authtoken.views import obtain_auth_token
@@ -69,6 +69,12 @@ urlpatterns = [
     path('emailPasswordreset/', SendPasswordResetEmailView.as_view(), name='SendPasswordResetEmailView'),
     path('reset_password/<uid>/<token>', UserPasswordResetView.as_view(), name='UserPasswordResetView'),
   
+path('csrf/', get_csrf, name='api-csrf'),
+    path('login/', login_view, name='api-login'),
+    path('logout/',logout_view, name='api-logout'),
+    path('session/', session_view, name='api-session'),
+    path('whoami/',whoami_view, name='api-whoami'),
+
 
 
 ]

@@ -1,5 +1,6 @@
 from functools import partial
 import json
+import logging
 from django.shortcuts import render
 from rest_framework.response import Response
 from django.contrib.auth.models import User
@@ -270,7 +271,7 @@ class employeeViewModelset1(ModelViewSet):
         serializer.save(owner=self.request.user)
 
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 def example(request, pk):
     x = employee.objects.get(id=pk)
     print("model object is ",x)
@@ -456,3 +457,85 @@ class UserPasswordResetView(APIView):
         if serializer.is_valid(raise_exception=True):
             return  Response({'msg':"Password Reset Successfully"}, status=HTTP_200_OK)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)            
+
+
+
+
+
+
+
+
+
+
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.contrib.auth import authenticate, login, logout
+from django.views.decorators.http import require_POST
+
+
+from django.middleware.csrf import get_token
+
+
+
+
+
+
+
+
+
+
+
+# session based login
+
+def get_csrf(request):
+    response = JsonResponse({'detail': 'CSRF cookie set'})
+    response['X-CSRFToken'] = get_token(request)
+    return response
+
+
+
+
+
+
+
+
+
+@require_POST
+def login_view(request):
+    data = json.loads(request.body)
+    username = data.get('username')
+    password = data.get('password')
+
+    if username is None or password is None:
+        return JsonResponse({'detail': 'Please provide username and password.'}, status=400)
+
+    user = authenticate(username=username, password=password)
+
+    if user is None:
+        return JsonResponse({'detail': 'Invalid credentials.'}, status=400)
+
+    login(request, user)
+    return JsonResponse({'detail': 'Successfully logged in.'})
+
+
+def logout_view(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'detail': 'You\'re not logged in.'}, status=400)
+
+    logout(request)
+    return JsonResponse({'detail': 'Successfully logged out.'})
+
+
+@ensure_csrf_cookie
+def session_view(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'isAuthenticated': False})
+
+    return JsonResponse({'isAuthenticated': True})
+
+
+def whoami_view(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'isAuthenticated': False})
+
+    return JsonResponse({'username': request.user.email})
+
